@@ -1,40 +1,70 @@
 import { motion } from "framer-motion";
 
-const skills = [
-  { name: "C++", level: 85 },
-  { name: "Java", level: 80 },
-  { name: "Spring Boot", level: 75 },
-  { name: "JavaScript", level: 80 },
-  { name: "HTML/CSS", level: 90 },
-  { name: "React", level: 70 },
-  { name: "Node.js", level: 70 },
-  { name: "MySQL", level: 75 },
-  { name: "MongoDB", level: 65 },
-  { name: "Git", level: 80 },
+const skillCategories = [
+  {
+    title: "Languages",
+    icon: "{ }",
+    skills: ["C++", "Java", "JavaScript", "TypeScript", "Python"],
+  },
+  {
+    title: "Frontend",
+    icon: "</>",
+    skills: ["React", "HTML5", "CSS3", "Tailwind CSS", "Framer Motion"],
+  },
+  {
+    title: "Backend",
+    icon: ">>_",
+    skills: ["Spring Boot", "Node.js", "Express.js", "REST APIs"],
+  },
+  {
+    title: "Database",
+    icon: "db:",
+    skills: ["MySQL", "MongoDB", "PostgreSQL", "Firebase"],
+  },
+  {
+    title: "Tools & DevOps",
+    icon: "~/",
+    skills: ["Git", "GitHub", "Docker", "VS Code", "Linux"],
+  },
 ];
 
-const SkillBar = ({ name, level, index }: { name: string; level: number; index: number }) => (
+const SkillCategory = ({
+  category,
+  index,
+}: {
+  category: (typeof skillCategories)[0];
+  index: number;
+}) => (
   <motion.div
-    className="group"
-    initial={{ opacity: 0, x: -30 }}
-    whileInView={{ opacity: 1, x: 0 }}
+    className="relative group"
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    transition={{ duration: 0.4, delay: index * 0.08 }}
+    transition={{ duration: 0.4, delay: index * 0.1 }}
   >
-    <div className="flex justify-between mb-1.5">
-      <span className="font-mono text-sm text-foreground group-hover:text-primary transition-colors">
-        {name}
-      </span>
-      <span className="font-mono text-xs text-muted-foreground">{level}%</span>
-    </div>
-    <div className="h-2 bg-muted rounded-full overflow-hidden">
-      <motion.div
-        className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
-        initial={{ width: 0 }}
-        whileInView={{ width: `${level}%` }}
-        viewport={{ once: true }}
-        transition={{ duration: 1, delay: 0.3 + index * 0.08, ease: "easeOut" }}
-      />
+    <div className="border border-primary/20 rounded-lg p-5 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_20px_hsl(var(--primary)/0.1)] h-full">
+      <div className="flex items-center gap-3 mb-4">
+        <span className="font-mono text-primary text-sm bg-primary/10 px-2 py-1 rounded">
+          {category.icon}
+        </span>
+        <h4 className="font-mono text-foreground font-semibold text-sm">
+          {category.title}
+        </h4>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {category.skills.map((skill, i) => (
+          <motion.span
+            key={skill}
+            className="font-mono text-xs px-3 py-1.5 rounded-full border border-muted-foreground/20 text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-default"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3, delay: 0.3 + i * 0.05 }}
+          >
+            {skill}
+          </motion.span>
+        ))}
+      </div>
     </div>
   </motion.div>
 );
@@ -42,23 +72,25 @@ const SkillBar = ({ name, level, index }: { name: string; level: number; index: 
 const SkillsSection = () => {
   return (
     <section id="skills" className="py-24 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="font-mono text-primary text-sm mb-2">{"// skills"}</h2>
+          <h2 className="font-mono text-primary text-sm mb-2">
+            {"// skills"}
+          </h2>
           <h3 className="text-3xl md:text-4xl font-bold font-display mb-12">
             <span className="text-foreground">Tech</span>{" "}
             <span className="gradient-text">Stack</span>
           </h3>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {skills.map((skill, i) => (
-            <SkillBar key={skill.name} {...skill} index={i} />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {skillCategories.map((category, i) => (
+            <SkillCategory key={category.title} category={category} index={i} />
           ))}
         </div>
       </div>
