@@ -1,3 +1,4 @@
+import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail, MapPin, Send, MessageSquare, Heart, ArrowUpRight } from "lucide-react";
 import { useState } from "react";
@@ -26,6 +27,10 @@ const socials = [
   },
 ];
 
+const SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  as string;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
+const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string;
+
 const ContactSection = () => {
   const [formState, setFormState] = useState({
     name: "",
@@ -34,20 +39,36 @@ const ContactSection = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setSubmitted(true);
-    setFormState({ name: "", email: "", message: "" });
-    
-    // Reset submitted state after 3 seconds
-    setTimeout(() => setSubmitted(false), 3000);
+    setError(null);
+
+    try {
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        {
+          from_name:  formState.name,
+          from_email: formState.email,
+          reply_to:   formState.email,
+          message:    formState.message,
+          to_email:   "aathip143@gmail.com",
+        },
+        PUBLIC_KEY
+      );
+
+      setSubmitted(true);
+      setFormState({ name: "", email: "", message: "" });
+      setTimeout(() => setSubmitted(false), 4000);
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      setError("Failed to send message. Please try again or reach out directly by email.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -213,6 +234,12 @@ const ContactSection = () => {
                       placeholder="Hey, I'd like to discuss..."
                     />
                   </div>
+
+                  {error && (
+                    <p className="font-mono text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-lg px-4 py-3">
+                      {error}
+                    </p>
+                  )}
 
                   <motion.button
                     type="submit"
